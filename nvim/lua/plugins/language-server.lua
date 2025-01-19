@@ -163,6 +163,7 @@ return {
 		--  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
 		--  - settings (table): Override the default settings passed when initializing the server.
 		--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+		local nvim_lsp = require("lspconfig")
 		local servers = {
 			-- clangd = {},
 			-- gopls = {},
@@ -174,8 +175,26 @@ return {
 			--    https://github.com/pmizio/typescript-tools.nvim
 			--
 			-- But for many setups, the LSP (`ts_ls`) will work just fine
-			ts_ls = {},
-			--
+			ts_ls = {
+				root_dir = nvim_lsp.util.root_pattern("package.json"),
+				single_file_support = false,
+			},
+			denols = {
+				root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc"),
+				init_options = {
+					lint = true,
+					unstable = true,
+					suggest = {
+						imports = {
+							hosts = {
+								["https://deno.land"] = true,
+								["https://cdn.nest.land"] = true,
+								["https://crux.land"] = true,
+							},
+						},
+					},
+				},
+			},
 			rust_analyzer = {
 				["rust-analyzer"] = {
 					cargo = {
